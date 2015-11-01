@@ -26,7 +26,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ImageCommandListener implements Listener {
     public void onCommandMessageReceived(CommandMessageReceivedEvent event) {
         if (event.getCommand().equals("get")) {
+
             event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOADING_PHOTO).build(), ImageBot.bot);
+            
             HttpResponse<JsonNode> response = null;
             try {
                 response = Unirest.get("https://api.imgur.com/3/gallery/search/")
