@@ -39,13 +39,10 @@ public class ImageCommandListener implements Listener {
             }
             JSONArray array = response.getBody().getObject().getJSONArray("data");
             JSONObject image = array.getJSONObject(ThreadLocalRandom.current().nextInt(array.length()));
-            File img = new File("/tmp/imagebot/" + image.getString("id") + image.getString("type").replace("image/", ""));
-            try {
-                FileUtils.copyURLToFile(new URL(image.getString("link")),img);
-            } catch (IOException|JSONException e) {
-                e.printStackTrace();
-            }
-            event.getChat().sendMessage(SendablePhotoMessage.builder().photo(new InputFile(img)).build(), ImageBot.bot);
+            event.getChat().sendMessage(SendablePhotoMessage.builder()
+                    .photo(new InputFile(image.getString("link")))
+                    .replyTo(event.getMessage())
+                    .build(), ImageBot.bot);
         }
     }
 }
