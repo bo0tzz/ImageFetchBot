@@ -13,12 +13,22 @@ import pro.zackpollard.telegrambot.api.chat.message.send.SendablePhotoMessage;
 import pro.zackpollard.telegrambot.api.event.Listener;
 import pro.zackpollard.telegrambot.api.event.chat.message.CommandMessageReceivedEvent;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by bo0tzz
  */
 public class ImageCommandListener implements Listener {
+    private ImageBot bot;
+    private final String url;
+
+    public ImageCommandListener(ImageBot bot) {
+        this.bot = bot;
+        url = "https://www.googleapis.com/customsearch/v1?key=" + bot.getKey() + "&cx=016322137100648159445:e9nsxf_q_-m&searchType=image&q=";
+    }
+
     public void onCommandMessageReceived(CommandMessageReceivedEvent event) {
         if (event.getCommand().equals("get")) {
 
@@ -26,20 +36,31 @@ public class ImageCommandListener implements Listener {
 
             HttpResponse<JsonNode> response = null;
             try {
-                response = Unirest.get("https://api.imgur.com/3/gallery/search/")
-                        .header("Authorization", "Client-ID 2b58810c2d5385e")
-                        .queryString("sort", "top")
-                        .queryString("q_exactly", event.getArgsString())
+                response = Unirest.get(url + event.getArgsString().replace(" ", "+"))
                         .asJson();
             } catch (UnirestException e) {
                 e.printStackTrace();
             }
-            JSONArray array = response.getBody().getObject().getJSONArray("data");
+            JSONArray array = response.getBody().getObject().getJSONArray("items");
+            if (array.length() == 0) {
+                event.getChat().sendMessage("No images found!", ImageBot.bot);
+                return;
+            }
             JSONObject image = array.getJSONObject(ThreadLocalRandom.current().nextInt(array.length()));
+            URL url;
+            try {
+                url = new URL(image.getString("link"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                event.getChat().sendMessage("Something went wrong while getting the image!", ImageBot.bot);
+                return;
+            }
+            System.out.println("Uploading photo: " + url);
             event.getChat().sendMessage(SendablePhotoMessage.builder()
-                    .photo(new InputFile(image.getString("link")))
+                    .photo(new InputFile(url))
                     .replyTo(event.getMessage())
                     .build(), ImageBot.bot);
+            System.out.println("Photo uploaded: " + url);
         }
     }
 }
