@@ -47,7 +47,7 @@ public class ImageCommandListener implements Listener {
                 array = response.getBody().getObject().getJSONArray("items");
             } catch (JSONException e) {
                 e.printStackTrace();
-                System.out.println("on: " + array);
+                System.out.println("on: " + response.getBody());
                 event.getChat().sendMessage("Something went wrong while getting the image!", ImageBot.bot);
             }
             if (array.length() == 0) {
