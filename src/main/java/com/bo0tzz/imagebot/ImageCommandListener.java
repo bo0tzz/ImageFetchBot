@@ -42,14 +42,14 @@ public class ImageCommandListener implements Listener {
             } catch (UnirestException e) {
                 e.printStackTrace();
             }
-            JSONArray array = null;
-            try {
-                array = response.getBody().getObject().getJSONArray("items");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                System.out.println("on: " + response.getBody());
-                event.getChat().sendMessage("Something went wrong while getting the image!", ImageBot.bot);
+
+            if (response.getBody().getObject().has("error")) {
+                event.getChat().sendMessage("The Google API returned an error - Bot probably got ratelimited!", ImageBot.bot);
+                System.out.println("Google API returned error: " + response.getBody());
+                return;
             }
+
+            JSONArray array = response.getBody().getObject().getJSONArray("items");
             if (array.length() == 0) {
                 event.getChat().sendMessage("No images found!", ImageBot.bot);
                 return;
