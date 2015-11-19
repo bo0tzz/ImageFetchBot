@@ -5,6 +5,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import pro.zackpollard.telegrambot.api.chat.message.send.ChatAction;
 import pro.zackpollard.telegrambot.api.chat.message.send.InputFile;
@@ -41,7 +42,14 @@ public class ImageCommandListener implements Listener {
             } catch (UnirestException e) {
                 e.printStackTrace();
             }
-            JSONArray array = response.getBody().getObject().getJSONArray("items");
+            JSONArray array = null;
+            try {
+                array = response.getBody().getObject().getJSONArray("items");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                System.out.println("on: " + array);
+                event.getChat().sendMessage("Something went wrong while getting the image!", ImageBot.bot);
+            }
             if (array.length() == 0) {
                 event.getChat().sendMessage("No images found!", ImageBot.bot);
                 return;

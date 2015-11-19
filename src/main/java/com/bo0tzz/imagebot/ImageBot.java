@@ -13,6 +13,10 @@ public class ImageBot {
     public static TelegramBot bot;
 
     public static void main(String[] args) {
+        if (args.length < 1) {
+            System.out.println("Missing auth token.");
+            System.exit(0);
+        }
         new ImageBot().run(args);
     }
 
@@ -20,6 +24,10 @@ public class ImageBot {
         bot = TelegramBot.login(args[0]);
         bot.getEventsManager().register(new ImageCommandListener(this));
         bot.startUpdates(false);
+    }
+
+    public void sendToMazen(String message) {
+        TelegramBot.getChat(-17349250).sendMessage(message, this.bot);
     }
 
     public String getKey() {
