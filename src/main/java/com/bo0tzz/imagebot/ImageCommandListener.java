@@ -5,7 +5,6 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import pro.zackpollard.telegrambot.api.chat.message.send.ChatAction;
 import pro.zackpollard.telegrambot.api.chat.message.send.InputFile;
@@ -23,11 +22,12 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ImageCommandListener implements Listener {
     private ImageBot bot;
-    private final String url;
+    private final String[] keys;
+    private int lastKey = 0;
 
     public ImageCommandListener(ImageBot bot) {
         this.bot = bot;
-        url = "https://www.googleapis.com/customsearch/v1?key=" + bot.getKey() + "&cx=016322137100648159445:e9nsxf_q_-m&searchType=image&q=";
+        this.keys = bot.getKeys();
     }
 
     public void onCommandMessageReceived(CommandMessageReceivedEvent event) {
@@ -37,7 +37,7 @@ public class ImageCommandListener implements Listener {
 
             HttpResponse<JsonNode> response = null;
             try {
-                response = Unirest.get(url + event.getArgsString().replace(" ", "+"))
+                response = Unirest.get(getUrl() + event.getArgsString().replace(" ", "+"))
                         .asJson();
             } catch (UnirestException e) {
                 e.printStackTrace();
@@ -70,5 +70,18 @@ public class ImageCommandListener implements Listener {
                     .build(), ImageBot.bot);
             System.out.println("Photo uploaded: " + url);
         }
+    }
+
+    private String getUrl() {
+
+        int chosenKey = ++lastKey;
+
+        if(keys.length < chosenKey) {
+
+            chosenKey = 0;
+            lastKey = 0;
+        }
+
+        return "https://www.googleapis.com/customsearch/v1?key=" + keys[chosenKey] + "&cx=016322137100648159445:e9nsxf_q_-m&searchType=image&q=";
     }
 }
