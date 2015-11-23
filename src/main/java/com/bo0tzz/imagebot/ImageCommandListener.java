@@ -44,7 +44,7 @@ public class ImageCommandListener implements Listener {
             }
 
             if (response.getBody().getObject().has("error")) {
-                event.getChat().sendMessage("The Google API returned the following error - " + response.getBody().getObject(), ImageBot.bot);
+                event.getChat().sendMessage("The Google API returned the following error - " + response.getBody().getObject().getJSONObject("error").getString("message"), ImageBot.bot);
                 System.out.println("Google API returned error: " + response.getBody());
                 return;
             }
