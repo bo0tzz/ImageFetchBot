@@ -5,6 +5,9 @@ import pro.zackpollard.telegrambot.api.TelegramBot;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bo0tzz
@@ -30,10 +33,10 @@ public class ImageBot {
         TelegramBot.getChat(-17349250).sendMessage(message, this.bot);
     }
 
-    public String getKey() {
+    public String[] getKeys() {
         try {
-            String key = FileUtils.readFileToString(new File("key"));
-            return key;
+            String[] keys = Files.lines(new File("key").toPath()).toArray(String[]::new);
+            return keys;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
