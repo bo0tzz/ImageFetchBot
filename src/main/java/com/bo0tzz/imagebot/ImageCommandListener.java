@@ -76,7 +76,7 @@ public class ImageCommandListener implements Listener {
 
         int chosenKey = ++lastKey;
 
-        if(keys.length < chosenKey) {
+        if(chosenKey >= keys.length) {
 
             chosenKey = 0;
             lastKey = 0;
