@@ -7,10 +7,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import pro.zackpollard.telegrambot.api.chat.message.send.ChatAction;
-import pro.zackpollard.telegrambot.api.chat.message.send.InputFile;
-import pro.zackpollard.telegrambot.api.chat.message.send.SendableChatAction;
-import pro.zackpollard.telegrambot.api.chat.message.send.SendablePhotoMessage;
+import pro.zackpollard.telegrambot.api.chat.message.send.*;
 import pro.zackpollard.telegrambot.api.event.Listener;
 import pro.zackpollard.telegrambot.api.event.chat.message.CommandMessageReceivedEvent;
 
@@ -92,8 +89,8 @@ public class ImageCommandListener implements Listener {
                 e.printStackTrace();
             }
             System.out.println("Uploading gif: " + url);
-            event.getChat().sendMessage(SendablePhotoMessage.builder()
-                .photo(new InputFile(url))
+            event.getChat().sendMessage(SendableDocumentMessage.builder()
+                .document(new InputFile(url))
                 .replyTo(event.getMessage())
                 .build(), ImageBot.bot);
         }
