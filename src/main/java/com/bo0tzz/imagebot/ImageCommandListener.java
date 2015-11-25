@@ -88,6 +88,10 @@ public class ImageCommandListener implements Listener {
             } catch (MalformedURLException|JSONException e) {
                 e.printStackTrace();
             }
+            if (url == null) {
+                event.getChat().sendMessage("No pictures found!", ImageBot.bot);
+                return;
+            }
             System.out.println("Uploading gif: " + url);
             event.getChat().sendMessage(SendableDocumentMessage.builder()
                 .document(new InputFile(url))
