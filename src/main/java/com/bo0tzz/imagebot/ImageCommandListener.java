@@ -73,9 +73,17 @@ public class ImageCommandListener implements Listener {
 
             event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOAD_DOCUMENT).build(), ImageBot.bot);
 
+            URL request;
+            try {
+                request = new URL(giphyAPI + event.getArgsString().replace(" ", "+"));
+            } catch (MalformedURLException e) {
+                event.getChat().sendMessage("Request contained illegal characters!", ImageBot.bot);
+                return;
+            }
+
             HttpResponse<JsonNode> response = null;
             try {
-                response = Unirest.get(giphyAPI + event.getArgsString().replace(" ", "+"))
+                response = Unirest.get(request.toString())
                         .asJson();
             } catch (UnirestException e) {
                 e.printStackTrace();
