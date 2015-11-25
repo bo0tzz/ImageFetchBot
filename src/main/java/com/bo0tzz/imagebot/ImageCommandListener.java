@@ -86,6 +86,7 @@ public class ImageCommandListener implements Listener {
                 JSONObject image = response.getBody().getObject().getJSONObject("data").getJSONObject("images").getJSONObject("original");
                 url = new URL(image.getString("url"));
             } catch (MalformedURLException|JSONException e) {
+                System.out.println("Error on response: " + response.getBody());
                 e.printStackTrace();
             }
             if (url == null) {
