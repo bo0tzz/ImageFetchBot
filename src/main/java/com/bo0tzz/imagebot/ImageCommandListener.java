@@ -12,6 +12,8 @@ import pro.zackpollard.telegrambot.api.event.Listener;
 import pro.zackpollard.telegrambot.api.event.chat.message.CommandMessageReceivedEvent;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -73,10 +75,10 @@ public class ImageCommandListener implements Listener {
 
             event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOAD_DOCUMENT).build(), ImageBot.bot);
 
-            URL request;
+            URI request;
             try {
-                request = new URL(giphyAPI + event.getArgsString().replace(" ", "+"));
-            } catch (MalformedURLException e) {
+                request = new URI(giphyAPI + event.getArgsString().replace(" ", "+"));
+            } catch (URISyntaxException e) {
                 event.getChat().sendMessage("Request contained illegal characters!", ImageBot.bot);
                 return;
             }
