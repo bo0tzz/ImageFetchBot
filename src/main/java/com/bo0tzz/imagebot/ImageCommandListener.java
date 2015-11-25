@@ -5,6 +5,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import pro.zackpollard.telegrambot.api.chat.message.send.ChatAction;
 import pro.zackpollard.telegrambot.api.chat.message.send.InputFile;
@@ -24,10 +25,12 @@ public class ImageCommandListener implements Listener {
     private ImageBot bot;
     private final String[] keys;
     private int lastKey = 0;
+    private final String giphyAPI;
 
     public ImageCommandListener(ImageBot bot) {
         this.bot = bot;
         this.keys = bot.getKeys();
+        this.giphyAPI = "http://api.giphy.com/v1/gifs/translate?api_key=" + bot.getGiphyKey() + "&s=";
     }
 
     public void onCommandMessageReceived(CommandMessageReceivedEvent event) {
@@ -69,6 +72,30 @@ public class ImageCommandListener implements Listener {
                     .replyTo(event.getMessage())
                     .build(), ImageBot.bot);
             System.out.println("Photo uploaded: " + url);
+        } else if (event.getCommand().equals("getgif")) {
+
+            event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOADING_PHOTO).build(), ImageBot.bot);
+
+            HttpResponse<JsonNode> response = null;
+            try {
+                response = Unirest.get(giphyAPI + event.getArgsString().replace(" ", "+"))
+                        .asJson();
+            } catch (UnirestException e) {
+                e.printStackTrace();
+            }
+
+            URL url = null;
+            try {
+                JSONObject image = response.getBody().getObject().getJSONObject("data").getJSONObject("images").getJSONObject("original");
+                url = new URL(image.getString("url"));
+            } catch (MalformedURLException|JSONException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Uploading gif: " + url);
+            event.getChat().sendMessage(SendablePhotoMessage.builder()
+                .photo(new InputFile(url))
+                .replyTo(event.getMessage())
+                .build(), ImageBot.bot);
         }
     }
 

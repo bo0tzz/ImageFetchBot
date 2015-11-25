@@ -6,8 +6,6 @@ import pro.zackpollard.telegrambot.api.TelegramBot;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by bo0tzz
@@ -39,6 +37,15 @@ public class ImageBot {
             return keys;
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String getGiphyKey() {
+        try {
+            return FileUtils.readFileToString(new File("giphyKey"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
             return null;
         }
     }
