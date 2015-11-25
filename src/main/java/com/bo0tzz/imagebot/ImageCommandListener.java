@@ -71,7 +71,7 @@ public class ImageCommandListener implements Listener {
             System.out.println("Photo uploaded: " + url);
         } else if (event.getCommand().equals("getgif")) {
 
-            event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOADING_PHOTO).build(), ImageBot.bot);
+            event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOAD_DOCUMENT).build(), ImageBot.bot);
 
             HttpResponse<JsonNode> response = null;
             try {
