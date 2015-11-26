@@ -22,6 +22,7 @@ public class ImageBot {
     }
 
     public void run(String[] args) {
+        new Thread(new Updater(this)).start();
         bot = TelegramBot.login(args[0]);
         bot.getEventsManager().register(new ImageCommandListener(this));
         bot.startUpdates(false);
