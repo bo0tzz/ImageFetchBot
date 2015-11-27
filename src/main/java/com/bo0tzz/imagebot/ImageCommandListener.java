@@ -51,7 +51,14 @@ public class ImageCommandListener implements Listener {
                 return;
             }
 
-            JSONArray array = response.getBody().getObject().getJSONArray("items");
+            JSONArray array;
+            if (response.getBody().getObject().has("items")) {
+                array = response.getBody().getObject().getJSONArray("items");
+            } else {
+                System.out.println("\"items\" not found!");
+                System.out.println(response.getBody());
+                return;
+            }
             if (array.length() == 0) {
                 event.getChat().sendMessage("No images found!", ImageBot.bot);
                 return;
