@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,6 +12,8 @@ import pro.zackpollard.telegrambot.api.chat.message.send.*;
 import pro.zackpollard.telegrambot.api.event.Listener;
 import pro.zackpollard.telegrambot.api.event.chat.message.CommandMessageReceivedEvent;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -145,6 +148,27 @@ public class ImageCommandListener implements Listener {
                     .build(), ImageBot.bot);
             event.getChat().sendMessage(SendablePhotoMessage.builder()
                     .photo(new InputFile(url2))
+                    .replyTo(event.getMessage())
+                    .build(), ImageBot.bot);
+        } else if (event.getCommand().equals("test3")) {
+            URL url = null;
+            try {
+                url = new URL("http://www.zackpollard.pro/at-screenshots/9F_NE7z3.png");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            File file = new File("temp" + this.toString());
+            try {
+                FileUtils.copyURLToFile(url, file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            event.getChat().sendMessage(SendablePhotoMessage.builder()
+                    .photo(new InputFile(file))
+                    .replyTo(event.getMessage())
+                    .build(), ImageBot.bot);
+            event.getChat().sendMessage(SendablePhotoMessage.builder()
+                    .photo(new InputFile(file))
                     .replyTo(event.getMessage())
                     .build(), ImageBot.bot);
         }
