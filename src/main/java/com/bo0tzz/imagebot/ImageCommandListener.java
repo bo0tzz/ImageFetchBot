@@ -117,60 +117,6 @@ public class ImageCommandListener implements Listener {
                 .document(new InputFile(url))
                 .replyTo(event.getMessage())
                 .build(), ImageBot.bot);
-        } else if (event.getCommand().equals("test1")) {
-            URL url = null;
-            try {
-                url = new URL("http://www.zackpollard.pro/at-screenshots/Og5wgEuc.png");
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            event.getChat().sendMessage(SendablePhotoMessage.builder()
-                    .photo(new InputFile(url))
-                    .replyTo(event.getMessage())
-                    .build(), ImageBot.bot);
-            event.getChat().sendMessage(SendablePhotoMessage.builder()
-                    .photo(new InputFile(url))
-                    .replyTo(event.getMessage())
-                    .build(), ImageBot.bot);
-        } else if (event.getCommand().equals("test2")) {
-            URL url1 = null;
-            URL url2 = null;
-            try {
-                url1 = new URL("http://www.zackpollard.pro/at-screenshots/Og5wgEuc.png");
-                url2 = new URL("http://www.zackpollard.pro/at-screenshots/9F_NE7z3.png");
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-
-            event.getChat().sendMessage(SendablePhotoMessage.builder()
-                    .photo(new InputFile(url1))
-                    .replyTo(event.getMessage())
-                    .build(), ImageBot.bot);
-            event.getChat().sendMessage(SendablePhotoMessage.builder()
-                    .photo(new InputFile(url2))
-                    .replyTo(event.getMessage())
-                    .build(), ImageBot.bot);
-        } else if (event.getCommand().equals("test3")) {
-            URL url = null;
-            try {
-                url = new URL("http://www.zackpollard.pro/at-screenshots/9F_NE7z3.png");
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            File file = new File("temp" + this.toString() + ".png");
-            try {
-                FileUtils.copyURLToFile(url, file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            event.getChat().sendMessage(SendablePhotoMessage.builder()
-                    .photo(new InputFile(file))
-                    .replyTo(event.getMessage())
-                    .build(), ImageBot.bot);
-            event.getChat().sendMessage(SendablePhotoMessage.builder()
-                    .photo(new InputFile(file))
-                    .replyTo(event.getMessage())
-                    .build(), ImageBot.bot);
         }
     }
 
