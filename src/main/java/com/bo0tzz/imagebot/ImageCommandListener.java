@@ -74,7 +74,6 @@ public class ImageCommandListener implements Listener {
             System.out.println("Uploading photo: " + url);
             event.getChat().sendMessage(SendablePhotoMessage.builder()
                     .photo(new InputFile(url))
-                    .caption("ayy lmao nice meme")
                     .replyTo(event.getMessage())
                     .build(), ImageBot.bot);
             System.out.println("Photo uploaded: " + url);
