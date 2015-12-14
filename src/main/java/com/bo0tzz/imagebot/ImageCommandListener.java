@@ -157,7 +157,7 @@ public class ImageCommandListener implements Listener {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            File file = new File("temp" + this.toString());
+            File file = new File("temp" + this.toString() + ".png");
             try {
                 FileUtils.copyURLToFile(url, file);
             } catch (IOException e) {
