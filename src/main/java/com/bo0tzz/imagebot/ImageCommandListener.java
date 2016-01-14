@@ -57,7 +57,7 @@ public class ImageCommandListener implements Listener {
         }
         if (array == null) return;
         List<InlineQueryResult> responses = new ArrayList<>();
-        for (int i = 0; i <= array.length(); i++) {
+        for (int i = 0; i < array.length(); i++) {
             JSONObject image = array.getJSONObject(i);
             URL url = null;
             URL thumb = null;
