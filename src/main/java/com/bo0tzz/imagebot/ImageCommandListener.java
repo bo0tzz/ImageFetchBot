@@ -43,13 +43,6 @@ public class ImageCommandListener implements Listener {
 
     @Override
     public void onInlineQueryReceived(InlineQueryReceivedEvent event) {
-        System.out.println("event received");
-        System.out.println(event);
-        System.out.println(event.getQuery());
-        System.out.println(event.getQuery().getQuery());
-        System.out.println(event.getQuery().getOffset());
-        System.out.println(event.getQuery().getQueryId());
-        /* This clearly doesn't work, debug first
         String query = event.getQuery().getQuery();
         HttpResponse<JsonNode> response = null;
         try {
@@ -75,7 +68,7 @@ public class ImageCommandListener implements Listener {
             responses.add(result);
         }
         event.getQuery().answer(ImageBot.bot, InlineQueryResponse.builder().results(responses).build());
-        */
+
     }
 
     public void onCommandMessageReceived(CommandMessageReceivedEvent event) {
