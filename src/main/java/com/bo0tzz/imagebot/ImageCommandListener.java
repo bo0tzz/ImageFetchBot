@@ -55,16 +55,19 @@ public class ImageCommandListener implements Listener {
         if (response.getBody().getObject().has("items")) {
             array = response.getBody().getObject().getJSONArray("items");
         }
+        if (array == null) return;
         List<InlineQueryResult> responses = new ArrayList<>();
         for (int i = 0; i <= array.length(); i++) {
             JSONObject image = array.getJSONObject(i);
             URL url = null;
+            URL thumb = null;
             try {
                 url = new URL(image.getString("link"));
+                thumb = new URL(image.getJSONObject("image").getString("thumbnailLink"));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            InlineQueryResultPhoto result = InlineQueryResultPhoto.builder().photoUrl(url).build();
+            InlineQueryResultPhoto result = InlineQueryResultPhoto.builder().photoUrl(url).thumbUrl(thumb).build();
             responses.add(result);
         }
         event.getQuery().answer(ImageBot.bot, InlineQueryResponse.builder().results(responses).build());
