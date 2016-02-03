@@ -67,7 +67,15 @@ public class ImageCommandListener implements Listener {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            InlineQueryResultPhoto result = InlineQueryResultPhoto.builder().photoUrl(url).thumbUrl(thumb).build();
+
+            //getting width and height of image, so Telegram will show the Response properly
+            int width = 0;
+            int height = 0;
+            
+            width = image.getJSONObject("image").getInt("width");
+            height = image.getJSONObject("image").getInt("height");
+            
+            InlineQueryResultPhoto result = InlineQueryResultPhoto.builder().photoUrl(url).photoWidth(width).photoHeight(height).thumbUrl(thumb).build();
             responses.add(result);
         }
         event.getQuery().answer(ImageBot.bot, InlineQueryResponse.builder().results(responses).build());
