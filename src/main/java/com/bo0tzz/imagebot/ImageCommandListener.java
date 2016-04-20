@@ -84,6 +84,10 @@ public class ImageCommandListener implements Listener {
 
     public void onCommandMessageReceived(CommandMessageReceivedEvent event) {
         if (event.getCommand().equals("get")) {
+            if (event.getArgsString().equals("")) {
+                event.getChat().sendMessage("Give me", ImageBot.bot);
+                return;
+            }
 
             event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOADING_PHOTO).build(), ImageBot.bot);
 
