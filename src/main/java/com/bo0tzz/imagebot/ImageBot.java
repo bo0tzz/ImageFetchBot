@@ -29,7 +29,7 @@ public class ImageBot {
     }
 
     public void sendToMazen(String message) {
-        TelegramBot.getChat(-1001000055116L).sendMessage(message, this.bot);
+        bot.getChat(-1001000055116L).sendMessage(message);
     }
 
     public String[] getKeys() {

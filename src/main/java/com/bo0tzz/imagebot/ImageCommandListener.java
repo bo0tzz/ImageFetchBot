@@ -85,11 +85,11 @@ public class ImageCommandListener implements Listener {
     public void onCommandMessageReceived(CommandMessageReceivedEvent event) {
         if (event.getCommand().equals("get")) {
             if (event.getArgsString().equals("")) {
-                event.getChat().sendMessage("Give me", ImageBot.bot);
+                event.getChat().sendMessage("Give me");
                 return;
             }
 
-            event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOADING_PHOTO).build(), ImageBot.bot);
+            event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOADING_PHOTO).build());
 
             HttpResponse<JsonNode> response = null;
             try {
@@ -100,7 +100,7 @@ public class ImageCommandListener implements Listener {
             }
 
             if (response.getBody().getObject().has("error")) {
-                event.getChat().sendMessage("The Google API returned the following error - " + response.getBody().getObject().getJSONObject("error").getString("message"), ImageBot.bot);
+                event.getChat().sendMessage("The Google API returned the following error - " + response.getBody().getObject().getJSONObject("error").getString("message"));
                 System.out.println("Google API returned error: " + response.getBody());
                 return;
             }
@@ -109,11 +109,11 @@ public class ImageCommandListener implements Listener {
             if (response.getBody().getObject().has("items")) {
                 array = response.getBody().getObject().getJSONArray("items");
             } else {
-                event.getChat().sendMessage("No images found!", ImageBot.bot);
+                event.getChat().sendMessage("No images found!");
                 return;
             }
             if (array.length() == 0) {
-                event.getChat().sendMessage("No images found!", ImageBot.bot);
+                event.getChat().sendMessage("No images found!");
                 return;
             }
             JSONObject image = array.getJSONObject(ThreadLocalRandom.current().nextInt(array.length()));
@@ -122,24 +122,24 @@ public class ImageCommandListener implements Listener {
                 url = new URL(image.getString("link"));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                event.getChat().sendMessage("Something went wrong while getting the image!", ImageBot.bot);
+                event.getChat().sendMessage("Something went wrong while getting the image!");
                 return;
             }
             System.out.println("Uploading photo: " + url);
             event.getChat().sendMessage(SendablePhotoMessage.builder()
                     .photo(new InputFile(url))
                     .replyTo(event.getMessage())
-                    .build(), ImageBot.bot);
+                    .build());
             System.out.println("Photo uploaded: " + url);
         } else if (event.getCommand().equals("getgif")) {
 
-            event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOAD_DOCUMENT).build(), ImageBot.bot);
+            event.getChat().sendMessage(SendableChatAction.builder().chatAction(ChatAction.UPLOAD_DOCUMENT).build());
 
             URI request;
             try {
                 request = new URI(giphyAPI + event.getArgsString().replace(" ", "+"));
             } catch (URISyntaxException e) {
-                event.getChat().sendMessage("Request contained illegal characters!", ImageBot.bot);
+                event.getChat().sendMessage("Request contained illegal characters!");
                 return;
             }
 
@@ -160,14 +160,14 @@ public class ImageCommandListener implements Listener {
                 e.printStackTrace();
             }
             if (url == null) {
-                event.getChat().sendMessage("No pictures found!", ImageBot.bot);
+                event.getChat().sendMessage("No pictures found!");
                 return;
             }
             System.out.println("Uploading gif: " + url);
             event.getChat().sendMessage(SendableDocumentMessage.builder()
                 .document(new InputFile(url))
                 .replyTo(event.getMessage())
-                .build(), ImageBot.bot);
+                .build());
         }
     }
 
