@@ -34,7 +34,9 @@ public class ImageBot {
 
     public String[] getKeys() {
         try {
-            String[] keys = Files.lines(new File("key").toPath()).toArray(String[]::new);
+            String[] keys = Files.lines(new File("key").toPath()).filter((predicate) -> {
+                return predicate.equals("") ? false : true;
+            }).toArray(String[]::new);
             return keys;
         } catch (IOException e) {
             e.printStackTrace();
