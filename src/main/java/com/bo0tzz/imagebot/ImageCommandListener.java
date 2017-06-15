@@ -9,7 +9,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import pro.zackpollard.telegrambot.api.chat.inline.send.InlineQueryResponse;
+import pro.zackpollard.telegrambot.api.chat.inline.send.content.InputMessageContent;
+import pro.zackpollard.telegrambot.api.chat.inline.send.content.InputTextMessageContent;
 import pro.zackpollard.telegrambot.api.chat.inline.send.results.InlineQueryResult;
+import pro.zackpollard.telegrambot.api.chat.inline.send.results.InlineQueryResultArticle;
 import pro.zackpollard.telegrambot.api.chat.inline.send.results.InlineQueryResultPhoto;
 import pro.zackpollard.telegrambot.api.chat.message.send.*;
 import pro.zackpollard.telegrambot.api.event.Listener;
@@ -54,6 +57,18 @@ public class ImageCommandListener implements Listener {
         JSONArray array = null;
         if (response.getBody().getObject().has("items")) {
             array = response.getBody().getObject().getJSONArray("items");
+        } else if (response.getBody().getObject().has("error")) {
+            InlineQueryResultArticle result = InlineQueryResultArticle.builder()
+                    .title("The bot has reached its request limit for today!")
+                    .description("Unfortunately, Google limits the amount of requests this bot can make every day. " +
+                            "Please contact @bo0tzz if you want to help get rid of this limit!")
+                    .inputMessageContent(InputTextMessageContent.builder()
+                        .messageText("Unfortunately this bot has reached the daily limit on how many images it can fetch for you." +
+                                "Please be patient, the limit should reset within 24 hours.\n" +
+                                "If you want to help get rid of these limits, please contact @bo0tzz!")
+                        .parseMode(ParseMode.MARKDOWN)
+                        .build())
+                    .build();
         }
         if (array == null) return;
         List<InlineQueryResult> responses = new ArrayList<>();
