@@ -69,6 +69,8 @@ public class ImageCommandListener implements Listener {
                         .parseMode(ParseMode.MARKDOWN)
                         .build())
                     .build();
+            event.getQuery().answer(ImageBot.bot, InlineQueryResponse.builder().results(result).build());
+            return;
         }
         if (array == null) return;
         List<InlineQueryResult> responses = new ArrayList<>();
