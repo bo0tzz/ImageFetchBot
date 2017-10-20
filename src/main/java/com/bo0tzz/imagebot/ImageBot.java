@@ -25,11 +25,6 @@ public class ImageBot {
         bot = TelegramBot.login(args[0]);
         bot.getEventsManager().register(new ImageCommandListener(this));
         bot.startUpdates(false);
-        new Thread(new Updater(this)).start();
-    }
-
-    public void sendToMazen(String message) {
-        bot.getChat(-1001000055116L).sendMessage(message);
     }
 
     public String[] getKeys() {
