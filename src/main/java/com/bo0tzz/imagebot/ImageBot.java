@@ -33,7 +33,7 @@ public class ImageBot {
 
     public String[] getKeys() {
         try {
-            String[] keys = Files.lines(new File("key").toPath())
+            String[] keys = Files.lines(new File("keys/key").toPath())
                     .filter((predicate) -> !predicate.equals(""))
                     .toArray(String[]::new);
             return keys;
@@ -45,7 +45,7 @@ public class ImageBot {
 
     public String getGiphyKey() {
         try {
-            return FileUtils.readFileToString(new File("giphyKey"));
+            return FileUtils.readFileToString(new File("keys/giphyKey"));
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
