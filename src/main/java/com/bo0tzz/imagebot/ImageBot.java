@@ -14,15 +14,19 @@ public class ImageBot {
     public static TelegramBot bot;
 
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.out.println("Missing auth token.");
-            System.exit(0);
+        String key = System.getenv("BOT_KEY");
+        if (key == null || key.equals("")) {
+            if (args.length < 1) {
+                System.out.println("Missing auth token.");
+                System.exit(0);
+            }
+            key = args[0];
         }
-        new ImageBot().run(args);
+        new ImageBot().run(key);
     }
 
-    public void run(String[] args) {
-        bot = TelegramBot.login(args[0]);
+    public void run(String key) {
+        bot = TelegramBot.login(key);
         bot.getEventsManager().register(new ImageCommandListener(this));
         bot.startUpdates(false);
     }
@@ -30,7 +34,7 @@ public class ImageBot {
     public String[] getKeys() {
         try {
             String[] keys = Files.lines(new File("key").toPath())
-                    .filter((predicate) -> predicate.equals("") ? false : true)
+                    .filter((predicate) -> !predicate.equals(""))
                     .toArray(String[]::new);
             return keys;
         } catch (IOException e) {
