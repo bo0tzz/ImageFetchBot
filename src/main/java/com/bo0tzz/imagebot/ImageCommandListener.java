@@ -4,12 +4,10 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import pro.zackpollard.telegrambot.api.chat.inline.send.InlineQueryResponse;
-import pro.zackpollard.telegrambot.api.chat.inline.send.content.InputMessageContent;
 import pro.zackpollard.telegrambot.api.chat.inline.send.content.InputTextMessageContent;
 import pro.zackpollard.telegrambot.api.chat.inline.send.results.InlineQueryResult;
 import pro.zackpollard.telegrambot.api.chat.inline.send.results.InlineQueryResultArticle;
@@ -19,12 +17,8 @@ import pro.zackpollard.telegrambot.api.event.Listener;
 import pro.zackpollard.telegrambot.api.event.chat.inline.InlineQueryReceivedEvent;
 import pro.zackpollard.telegrambot.api.event.chat.message.CommandMessageReceivedEvent;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -49,9 +43,9 @@ public class ImageCommandListener implements Listener {
         String query = event.getQuery().getQuery();
         HttpResponse<JsonNode> response = null;
         try {
-            response = Unirest.get(getUrl() + query.replace(" ", "+"))
+            response = Unirest.get(getUrl() + URLEncoder.encode(query, "UTF-8"))
                     .asJson();
-        } catch (UnirestException e) {
+        } catch (UnirestException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         JSONArray array = null;
@@ -110,9 +104,9 @@ public class ImageCommandListener implements Listener {
 
             HttpResponse<JsonNode> response = null;
             try {
-                response = Unirest.get(getUrl() + event.getArgsString().replace(" ", "+"))
+                response = Unirest.get(getUrl() + URLEncoder.encode(event.getArgsString(), "UTF-8"))
                         .asJson();
-            } catch (UnirestException e) {
+            } catch (UnirestException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
 
@@ -154,9 +148,14 @@ public class ImageCommandListener implements Listener {
 
             URI request;
             try {
-                request = new URI(giphyAPI + event.getArgsString().replace(" ", "+"));
+                request = new URI(giphyAPI + URLEncoder.encode(event.getArgsString(), "UTF-8"));
             } catch (URISyntaxException e) {
                 event.getChat().sendMessage("Request contained illegal characters!");
+                e.printStackTrace();
+                return;
+            } catch (UnsupportedEncodingException e) {
+                event.getChat().sendMessage("URL encoding failed!");
+                e.printStackTrace();
                 return;
             }
 
