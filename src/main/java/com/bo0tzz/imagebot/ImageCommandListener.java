@@ -27,12 +27,12 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by bo0tzz
  */
 public class ImageCommandListener implements Listener {
-    private ImageBot bot;
+    private ImageFetcherBot bot;
     private final String[] keys;
     private int lastKey = 0;
     private final String giphyAPI;
 
-    public ImageCommandListener(ImageBot bot) {
+    public ImageCommandListener(ImageFetcherBot bot) {
         this.bot = bot;
         this.keys = bot.getKeys();
         this.giphyAPI = "http://api.giphy.com/v1/gifs/translate?api_key=" + bot.getGiphyKey() + "&s=";
@@ -63,7 +63,7 @@ public class ImageCommandListener implements Listener {
                         .parseMode(ParseMode.MARKDOWN)
                         .build())
                     .build();
-            event.getQuery().answer(ImageBot.bot, InlineQueryResponse.builder().results(result).build());
+            event.getQuery().answer(ImageFetcherBot.bot, InlineQueryResponse.builder().results(result).build());
             return;
         }
         if (array == null) return;
@@ -89,7 +89,7 @@ public class ImageCommandListener implements Listener {
             InlineQueryResultPhoto result = InlineQueryResultPhoto.builder().photoUrl(url).photoWidth(width).photoHeight(height).thumbUrl(thumb).build();
             responses.add(result);
         }
-        event.getQuery().answer(ImageBot.bot, InlineQueryResponse.builder().results(responses).build());
+        event.getQuery().answer(ImageFetcherBot.bot, InlineQueryResponse.builder().results(responses).build());
 
     }
 

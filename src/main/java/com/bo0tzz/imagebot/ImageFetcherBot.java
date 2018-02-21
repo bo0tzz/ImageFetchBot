@@ -10,7 +10,7 @@ import java.nio.file.Files;
 /**
  * Created by bo0tzz
  */
-public class ImageBot {
+public class ImageFetcherBot {
     public static TelegramBot bot;
 
     public static void main(String[] args) {
@@ -22,7 +22,7 @@ public class ImageBot {
             }
             key = args[0];
         }
-        new ImageBot().run(key);
+        new ImageFetcherBot().run(key);
     }
 
     public void run(String key) {
