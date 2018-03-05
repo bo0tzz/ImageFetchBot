@@ -12,6 +12,9 @@ import com.jtelegram.api.message.impl.PhotoMessage;
 import com.jtelegram.api.message.impl.TextMessage;
 import com.jtelegram.api.message.input.file.ExternalInputFile;
 import com.jtelegram.api.requests.message.send.SendPhoto;
+import com.jtelegram.api.requests.message.send.SendText;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,6 +23,8 @@ public class ImageCommandHandler implements CommandHandler {
 
     private final GoogleImageSearchClient googleImageSearchClient;
     private final ImageFetcherBot imageFetcherBot;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     public ImageCommandHandler(GoogleImageSearchClient googleImageSearchClient, ImageFetcherBot imageFetcherBot) {
 
@@ -62,24 +67,37 @@ public class ImageCommandHandler implements CommandHandler {
 
         SendPhoto sendPhoto = SendPhoto.builder()
                 .chatId(command.getChat().getChatId())
+                .replyToMessageId(baseMessage.getMessageId())
                 .photo(new ExternalInputFile(photoUrl))
                 .callback(this::consumePhotoMessage)
                 .errorHandler(e -> this.errorHandler(e, baseMessage))
                 .build();
 
-        //TODO send photo
+        imageFetcherBot.getBot().perform(sendPhoto);
 
     }
 
     public void errorHandler(TelegramException ex, TextMessage baseMessage) {
 
-        //TODO handle error - how do I send this to the user?
+        ImageFetcherBot.handleError(ex);
+
+        String errorMessage = "I encountered an error while trying to find your image!\n" +
+                "Please try again. If this keeps happening, please contact my creator @bo0tzz";
+
+        SendText sendText = SendText.builder()
+                .text(errorMessage)
+                .chatId(baseMessage.getChat().getChatId())
+                .replyToMessageID(baseMessage.getMessageId())
+                .errorHandler(ImageFetcherBot::handleFatalError)
+                .build();
+
+        imageFetcherBot.getBot().perform(sendText);
 
     }
 
     public void consumePhotoMessage(PhotoMessage photoMessage) {
 
-        //TODO log successfully sent messages?
+        LOGGER.trace("Sent photo {} to chat {}", photoMessage.getMessageId(), photoMessage.getChat().getChatId().getId());
 
     }
 
