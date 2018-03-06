@@ -4,7 +4,6 @@ import com.bo0tzz.imagebot.client.GoogleImageSearchClient;
 import com.bo0tzz.imagebot.handler.ImageCommandHandler;
 import com.jtelegram.api.TelegramBot;
 import com.jtelegram.api.TelegramBotRegistry;
-import com.jtelegram.api.ex.TelegramException;
 import com.jtelegram.api.update.PollingUpdateProvider;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -75,23 +74,14 @@ public class ImageFetcherBot {
         }
     }
 
-    public String getGiphyKey() {
-        try {
-            return FileUtils.readFileToString(new File("keys/giphyKey"), "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
-    public static void handleFatalError(TelegramException ex) {
+    public static void handleFatalError(Exception ex) {
         LOGGER.error("Fatal error occurred!\n{}", ex.getMessage());
         ex.printStackTrace();
         System.exit(1);
     }
 
-    public static void handleError(TelegramException ex) {
-        LOGGER.warn("Fatal error occurred!\n{}", ex.getMessage());
+    public static void handleError(Exception ex) {
+        LOGGER.warn("Error occurred!\n{}", ex.getMessage());
         ex.printStackTrace();
     }
 

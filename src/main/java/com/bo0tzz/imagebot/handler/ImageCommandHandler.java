@@ -4,10 +4,11 @@ import com.bo0tzz.imagebot.ImageFetcherBot;
 import com.bo0tzz.imagebot.client.GoogleImageSearchClient;
 import com.bo0tzz.imagebot.google.GoogleSearchResponse;
 import com.bo0tzz.imagebot.google.Item;
+import com.bo0tzz.imagebot.google.error.GoogleError;
+import com.bo0tzz.imagebot.utils.Util;
 import com.jtelegram.api.commands.Command;
 import com.jtelegram.api.commands.CommandHandler;
 import com.jtelegram.api.events.message.TextMessageEvent;
-import com.jtelegram.api.ex.TelegramException;
 import com.jtelegram.api.message.impl.PhotoMessage;
 import com.jtelegram.api.message.impl.TextMessage;
 import com.jtelegram.api.message.input.file.ExternalInputFile;
@@ -26,6 +27,9 @@ public class ImageCommandHandler implements CommandHandler {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
+    public static final String ERROR_MESSAGE = "I encountered an error while trying to find your image!\n" +
+            "Please try again. If this keeps happening, please contact my creator @bo0tzz";
+
     public ImageCommandHandler(GoogleImageSearchClient googleImageSearchClient, ImageFetcherBot imageFetcherBot) {
 
         this.googleImageSearchClient = googleImageSearchClient;
@@ -40,11 +44,43 @@ public class ImageCommandHandler implements CommandHandler {
 
         String query = command.getArgsAsText();
 
+        if (Util.isEmpty(query)) {
+
+            String message = "Please send a query to search for! Example:\n/get@ImageFetcherBot dogs";
+
+            SendText sendText = SendText.builder()
+                    .text(message)
+                    .chatId(baseMessage.getChat().getChatId())
+                    .replyToMessageID(baseMessage.getMessageId())
+                    .errorHandler(ImageFetcherBot::handleFatalError)
+                    .build();
+
+            imageFetcherBot.getBot().perform(sendText);
+
+            return;
+
+        }
+
+        //TODO send chat action "uploading"
+
+        LOGGER.debug("Received new image search command: {} from user {} in chat {}.", query, baseMessage.getFrom().getUsername(), baseMessage.getChat().getChatId().getId());
+
         GoogleSearchResponse imageResults = googleImageSearchClient.getImageResults(query);
 
-        if (imageResults == null) {
+        if (imageResults.hasError()) {
 
-            //TODO return error to user
+            GoogleError error = imageResults.getError();
+            LOGGER.error("Received an error response from google: {}", error);
+
+            SendText sendText = SendText.builder()
+                    .text(ERROR_MESSAGE)
+                    .chatId(baseMessage.getChat().getChatId())
+                    .replyToMessageID(baseMessage.getMessageId())
+                    .errorHandler(ImageFetcherBot::handleFatalError)
+                    .build();
+
+            imageFetcherBot.getBot().perform(sendText);
+
             return;
 
         }
@@ -57,10 +93,9 @@ public class ImageCommandHandler implements CommandHandler {
 
             photoUrl = new URL(item.getLink());
 
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException ex) {
 
-            e.printStackTrace();
-            //TODO return error to user
+            handleError(ex, baseMessage);
             return;
 
         }
@@ -70,22 +105,21 @@ public class ImageCommandHandler implements CommandHandler {
                 .replyToMessageId(baseMessage.getMessageId())
                 .photo(new ExternalInputFile(photoUrl))
                 .callback(this::consumePhotoMessage)
-                .errorHandler(e -> this.errorHandler(e, baseMessage))
+                .errorHandler(e -> this.handleError(e, baseMessage))
                 .build();
 
         imageFetcherBot.getBot().perform(sendPhoto);
 
+        LOGGER.debug("Successfully sent photo to chat {}.", baseMessage.getChat().getChatId().getId());
+
     }
 
-    public void errorHandler(TelegramException ex, TextMessage baseMessage) {
+    public void handleError(Exception ex, TextMessage baseMessage) {
 
         ImageFetcherBot.handleError(ex);
 
-        String errorMessage = "I encountered an error while trying to find your image!\n" +
-                "Please try again. If this keeps happening, please contact my creator @bo0tzz";
-
         SendText sendText = SendText.builder()
-                .text(errorMessage)
+                .text(ERROR_MESSAGE)
                 .chatId(baseMessage.getChat().getChatId())
                 .replyToMessageID(baseMessage.getMessageId())
                 .errorHandler(ImageFetcherBot::handleFatalError)

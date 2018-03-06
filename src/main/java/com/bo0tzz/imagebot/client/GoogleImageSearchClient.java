@@ -1,11 +1,17 @@
 package com.bo0tzz.imagebot.client;
 
+import com.bo0tzz.imagebot.ImageFetcherBot;
 import com.bo0tzz.imagebot.google.GoogleSearchResponse;
 import com.bo0tzz.imagebot.google.NextPage;
+import com.bo0tzz.imagebot.google.error.GoogleError;
 import com.google.common.collect.Iterators;
+import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -15,9 +21,12 @@ import java.util.List;
 public class GoogleImageSearchClient {
 
     private final Iterator<String> keys;
+    private final Gson gson = new Gson();
 
     public static final String GOOGLE_URL = "https://www.googleapis.com/customsearch/v1?key=%s&cx=016322137100648159445:e9nsxf_q_-m&searchType=image&q=";
     public static final String PAGING_STRING = "&start=%d";
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     public GoogleImageSearchClient(List<String> keys) {
 
@@ -27,21 +36,30 @@ public class GoogleImageSearchClient {
 
     public GoogleSearchResponse getImageResults(String query) {
 
-        HttpResponse<GoogleSearchResponse> googleSearchResponseHttpResponse;
+        LOGGER.debug("Searching images for query: {}.", query);
+
+        HttpResponse<JsonNode> jsonNodeHttpResponse;
 
         try {
 
             String url = this.getUrl(query, 0);
-            googleSearchResponseHttpResponse = Unirest.get(url).asObject(GoogleSearchResponse.class);
+            jsonNodeHttpResponse = Unirest.get(url).asJson();
 
-        } catch (UnsupportedEncodingException | UnirestException e) {
+        } catch (UnsupportedEncodingException | UnirestException ex) {
 
-            //TODO add logging
-            return null;
+            ImageFetcherBot.handleError(ex);
+
+            GoogleError error = new GoogleError();
+            error.setMessage(ex.getMessage());
+
+            GoogleSearchResponse errorResponse = new GoogleSearchResponse();
+            errorResponse.setError(error);
+
+            return errorResponse;
 
         }
 
-        return googleSearchResponseHttpResponse.getBody();
+        return gson.fromJson(jsonNodeHttpResponse.getBody().toString(), GoogleSearchResponse.class);
 
     }
 
@@ -60,9 +78,9 @@ public class GoogleImageSearchClient {
             String url = this.getUrl(query, startIndex);
             googleSearchResponseHttpResponse = Unirest.get(url).asObject(GoogleSearchResponse.class);
 
-        } catch (UnsupportedEncodingException | UnirestException e) {
+        } catch (UnsupportedEncodingException | UnirestException ex) {
 
-            //TODO add logging
+            ImageFetcherBot.handleError(ex);
             return null;
 
         }
