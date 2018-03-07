@@ -51,6 +51,7 @@ public class GoogleImageSearchClient {
 
             String url = this.getUrl(query, 0);
             jsonNodeHttpResponse = Unirest.get(url).asJson();
+            //TODO migrate to com.squareup.okhttp3
 
         } catch (UnsupportedEncodingException | UnirestException ex) {
 
