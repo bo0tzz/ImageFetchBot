@@ -2,16 +2,19 @@ package com.bo0tzz.imagebot;
 
 import com.bo0tzz.imagebot.client.GoogleImageSearchClient;
 import com.bo0tzz.imagebot.handler.ImageCommandHandler;
+import com.bo0tzz.imagebot.handler.InlineQueryHandler;
+import com.bo0tzz.imagebot.utils.Util;
 import com.jtelegram.api.TelegramBot;
 import com.jtelegram.api.TelegramBotRegistry;
+import com.jtelegram.api.events.inline.InlineQueryEvent;
 import com.jtelegram.api.update.PollingUpdateProvider;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,13 +50,14 @@ public class ImageFetcherBot {
                 .updateProvider(new PollingUpdateProvider())
                 .build();
 
-        registry.registerBot(apiKey, (bot, error) -> {
+        registry.registerBot(apiKey, (telegramBot, error) -> {
 
             if (error != null) ImageFetcherBot.handleFatalError(error);
 
-            this.bot = bot;
+            this.bot = telegramBot;
 
             this.bot.getCommandRegistry().registerCommand("get", new ImageCommandHandler(this.googleImageSearchClient,this));
+            this.bot.getEventRegistry().registerEvent(InlineQueryEvent.class, new InlineQueryHandler(this.googleImageSearchClient, this));
 
         });
 
@@ -66,23 +70,21 @@ public class ImageFetcherBot {
     private List<String> getKeys() {
         try {
             return Files.lines(new File("keys/key").toPath())
-                    .filter((predicate) -> !predicate.equals(""))
+                    .filter(Util::isNotEmpty)
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            ImageFetcherBot.handleError(e);
+            return new LinkedList<>();
         }
     }
 
     public static void handleFatalError(Exception ex) {
-        LOGGER.error("Fatal error occurred!\n{}", ex.getMessage());
-        ex.printStackTrace();
+        LOGGER.error("Fatal error occurred!", ex);
         System.exit(1);
     }
 
     public static void handleError(Exception ex) {
-        LOGGER.warn("Error occurred!\n{}", ex.getMessage());
-        ex.printStackTrace();
+        LOGGER.warn("Error occurred!", ex);
     }
 
 }

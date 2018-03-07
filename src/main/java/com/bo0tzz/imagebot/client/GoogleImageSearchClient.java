@@ -26,9 +26,16 @@ public class GoogleImageSearchClient {
     public static final String GOOGLE_URL = "https://www.googleapis.com/customsearch/v1?key=%s&cx=016322137100648159445:e9nsxf_q_-m&searchType=image&q=";
     public static final String PAGING_STRING = "&start=%d";
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleImageSearchClient.class);
 
     public GoogleImageSearchClient(List<String> keys) {
+
+        if (keys.isEmpty()) {
+
+            LOGGER.error("You didn't give me any keys! Please supply google API keys.");
+            System.exit(1);
+
+        }
 
         this.keys = Iterators.cycle(keys);
 

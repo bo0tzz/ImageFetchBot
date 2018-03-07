@@ -25,9 +25,9 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
     private final GoogleImageSearchClient googleImageSearchClient;
     private final ImageFetcherBot imageFetcherBot;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(InlineQueryHandler.class);
 
-    public static final String ERROR_MESSAGE = "I encountered an error while trying to find your image!\n" +
+    public static final String ERROR_MESSAGE = "I encountered an error while trying to find your image!%n" +
             "Please try again. If this keeps happening, please contact my creator @bo0tzz and mention error code %s";
 
     public InlineQueryHandler(GoogleImageSearchClient googleImageSearchClient, ImageFetcherBot imageFetcherBot) {
@@ -101,7 +101,7 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
         }
 
         List<InlineResult> resultPhotos = imageResults.getItems().stream()
-                .map((item) -> InlineResultPhoto.builder()
+                .map(item -> InlineResultPhoto.builder()
                             .id(queryId.toString())
                             .url(item.getLink())
                             .thumbUrl(item.getImage().getThumbnailLink())

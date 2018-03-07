@@ -25,7 +25,7 @@ public class ImageCommandHandler implements CommandHandler {
     private final GoogleImageSearchClient googleImageSearchClient;
     private final ImageFetcherBot imageFetcherBot;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageCommandHandler.class);
 
     public static final String ERROR_MESSAGE = "I encountered an error while trying to find your image!\n" +
             "Please try again. If this keeps happening, please contact my creator @bo0tzz";
@@ -61,7 +61,7 @@ public class ImageCommandHandler implements CommandHandler {
 
         }
 
-        //TODO send chat action "uploading"
+        //FUTURE send chat action "uploading"
 
         LOGGER.debug("Received new image search command: {} from user {} in chat {}.", query, baseMessage.getFrom().getUsername(), baseMessage.getChat().getChatId().getId());
 
