@@ -39,6 +39,7 @@ public class ImageFetcherBot {
 
         TelegramBotRegistry registry = TelegramBotRegistry.builder()
                 .updateProvider(new PollingUpdateProvider())
+                .eventThreadCount(10)
                 .build();
 
         registry.registerBot(configuration.getTelegramKey(), this::setupTelegramBot);
