@@ -106,7 +106,7 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
 
         List<InlineResult> resultPhotos = imageResults.getItems().stream()
                 .map(item -> InlineResultPhoto.builder()
-                            .id(queryId.toString())
+                            .id(UUID.randomUUID().toString()) //TODO figure out how to do something useful here
                             .url(item.getLink())
                             .thumbUrl(item.getImage().getThumbnailLink())
                             .build())
@@ -115,14 +115,19 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
         LOGGER.debug("Preparing inline query response");
 
         AnswerInlineQuery answer = AnswerInlineQuery.builder()
-                .queryId(queryId.toString())
+                .queryId(inlineQueryEvent.getQuery().getId())
                 .addAllResults(resultPhotos)
+                .errorHandler(ImageFetcherBot::handleError) //TODO add callback for success flow
                 .cacheTime(604800)
                 .build();
 
         LOGGER.debug("Performing inline query response");
 
         imageFetcherBot.getBot().perform(answer);
+
+        LOGGER.debug("Sent inline query response!");
+
+        MDC.clear();
 
     }
 
