@@ -28,6 +28,8 @@ public class GoogleImageSearchClient {
     public static final String PAGING_STRING = "&start=%d";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleImageSearchClient.class);
+    private static final String LOG_KEY_FILTER = "key=(.*)&search";
+    private static final String REDACTED_KEY = "key=<redacted>&search";
 
     public GoogleImageSearchClient(List<String> keys) {
 
@@ -52,9 +54,9 @@ public class GoogleImageSearchClient {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            LOGGER.debug("Sending request to google: {}", request);
+            LOGGER.debug("Sending request to google: {}", request.toString().replaceAll(LOG_KEY_FILTER, REDACTED_KEY));
             Response response = httpClient.newCall(request).execute();
-            LOGGER.debug("Received response from google: {}", response);
+            LOGGER.debug("Received response from google: {}", request.toString().replaceAll(LOG_KEY_FILTER, REDACTED_KEY));
             return gson.fromJson(response.body().string(), GoogleSearchResponse.class);
 
         } catch (IOException ex) {
@@ -86,9 +88,9 @@ public class GoogleImageSearchClient {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            LOGGER.debug("Sending request to google: {}", request);
+            LOGGER.debug("Sending request to google: {}", request.toString().replaceAll(LOG_KEY_FILTER, REDACTED_KEY));
             Response response = httpClient.newCall(request).execute();
-            LOGGER.debug("Received response from google: {}", response);
+            LOGGER.debug("Received response from google: {}", request.toString().replaceAll(LOG_KEY_FILTER, REDACTED_KEY));
             return gson.fromJson(response.body().string(), GoogleSearchResponse.class);
 
         } catch (IOException ex) {
