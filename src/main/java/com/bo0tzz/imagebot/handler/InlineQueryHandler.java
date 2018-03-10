@@ -74,6 +74,8 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
 
         GoogleSearchResponse imageResults = googleImageSearchClient.getImageResults(query);
 
+        LOGGER.debug("Received google response for query: \"{}\"", query);
+
         if (imageResults.hasError()) {
 
             GoogleError error = imageResults.getError();
@@ -100,6 +102,8 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
 
         }
 
+        LOGGER.debug("Creating photo response list");
+
         List<InlineResult> resultPhotos = imageResults.getItems().stream()
                 .map(item -> InlineResultPhoto.builder()
                             .id(queryId.toString())
@@ -108,11 +112,15 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
                             .build())
                 .collect(Collectors.toList());
 
+        LOGGER.debug("Preparing inline query response");
+
         AnswerInlineQuery answer = AnswerInlineQuery.builder()
                 .queryId(queryId.toString())
                 .addAllResults(resultPhotos)
                 .cacheTime(604800)
                 .build();
+
+        LOGGER.debug("Performing inline query response");
 
         imageFetcherBot.getBot().perform(answer);
 
