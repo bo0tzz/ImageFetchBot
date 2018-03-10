@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ImageFetcherBot {
 
-    //TODO move to latest snapshot version
     private TelegramBot bot;
 
     private final GoogleImageSearchClient googleImageSearchClient;
