@@ -42,6 +42,8 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
     @Override
     public void onEvent(InlineQueryEvent inlineQueryEvent) {
 
+        //TODO wait for a full query before sending request to google?
+
         UUID queryId = UUID.randomUUID();
         MDC.put("queryId", queryId.toString());
 
@@ -131,6 +133,8 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
 
     public InlineResult toInlineResult(Item item) {
 
+        //TODO Handle this in the Item class
+        //TODO using gson adapters
         switch (item.getMime()) {
 
             case "image/gif":
