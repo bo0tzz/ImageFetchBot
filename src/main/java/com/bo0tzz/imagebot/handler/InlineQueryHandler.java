@@ -3,12 +3,14 @@ package com.bo0tzz.imagebot.handler;
 import com.bo0tzz.imagebot.ImageFetcherBot;
 import com.bo0tzz.imagebot.client.GoogleImageSearchClient;
 import com.bo0tzz.imagebot.google.GoogleSearchResponse;
+import com.bo0tzz.imagebot.google.Item;
 import com.bo0tzz.imagebot.google.error.GoogleError;
 import com.bo0tzz.imagebot.utils.Util;
 import com.jtelegram.api.events.EventHandler;
 import com.jtelegram.api.events.inline.InlineQueryEvent;
 import com.jtelegram.api.inline.input.InputTextMessageContent;
 import com.jtelegram.api.inline.result.InlineResultArticle;
+import com.jtelegram.api.inline.result.InlineResultGif;
 import com.jtelegram.api.inline.result.InlineResultPhoto;
 import com.jtelegram.api.inline.result.framework.InlineResult;
 import com.jtelegram.api.requests.inline.AnswerInlineQuery;
@@ -105,11 +107,7 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
         LOGGER.debug("Creating photo response list");
 
         List<InlineResult> resultPhotos = imageResults.getItems().stream()
-                .map(item -> InlineResultPhoto.builder()
-                            .id(UUID.randomUUID().toString()) //TODO figure out how to do something useful here
-                            .url(item.getLink())
-                            .thumbUrl(item.getImage().getThumbnailLink())
-                            .build())
+                .map(this::toInlineResult)
                 .collect(Collectors.toList());
 
         LOGGER.debug("Preparing inline query response");
@@ -128,6 +126,30 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
         LOGGER.debug("Sent inline query response!");
 
         MDC.clear();
+
+    }
+
+    public InlineResult toInlineResult(Item item) {
+
+        switch (item.getMime()) {
+
+            case "image/gif":
+                LOGGER.debug("Image type was image/gif");
+                return InlineResultGif.builder()
+                        .id(UUID.randomUUID().toString())
+                        .url(item.getLink())
+                        .thumbUrl(item.getImage().getThumbnailLink())
+                        .build();
+
+            default:
+                LOGGER.debug("Image type was {}", item.getMime());
+                return InlineResultPhoto.builder()
+                        .id(UUID.randomUUID().toString()) //TODO figure out how to do something useful here
+                        .url(item.getLink())
+                        .thumbUrl(item.getImage().getThumbnailLink())
+                        .build();
+
+        }
 
     }
 
