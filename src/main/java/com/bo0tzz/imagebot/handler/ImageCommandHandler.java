@@ -9,11 +9,13 @@ import com.bo0tzz.imagebot.utils.Util;
 import com.jtelegram.api.commands.Command;
 import com.jtelegram.api.commands.CommandHandler;
 import com.jtelegram.api.events.message.TextMessageEvent;
-import com.jtelegram.api.message.impl.PhotoMessage;
+import com.jtelegram.api.message.Message;
 import com.jtelegram.api.message.impl.TextMessage;
 import com.jtelegram.api.message.input.file.ExternalInputFile;
+import com.jtelegram.api.requests.framework.TelegramRequest;
 import com.jtelegram.api.requests.message.send.SendPhoto;
 import com.jtelegram.api.requests.message.send.SendText;
+import com.jtelegram.api.requests.message.send.SendVideo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,17 +102,40 @@ public class ImageCommandHandler implements CommandHandler {
 
         }
 
-        SendPhoto sendPhoto = SendPhoto.builder()
-                .chatId(command.getChat().getChatId())
-                .replyToMessageId(baseMessage.getMessageId())
-                .photo(new ExternalInputFile(photoUrl))
-                .callback(this::consumePhotoMessage)
-                .errorHandler(e -> this.handleError(e, baseMessage))
-                .build();
+        TelegramRequest request;
 
-        imageFetcherBot.getBot().perform(sendPhoto);
+        switch (item.getMime()) {
 
-        LOGGER.debug("Successfully sent photo to chat {}.", baseMessage.getChat().getChatId().getId());
+            case "image/jpeg":
+            case "image/jpg":
+            case "image/png":
+                request = SendPhoto.builder()
+                        .chatId(command.getChat().getChatId())
+                        .replyToMessageId(baseMessage.getMessageId())
+                        .photo(new ExternalInputFile(photoUrl))
+                        .callback(this::consumeMessage)
+                        .errorHandler(e -> this.handleError(e, baseMessage))
+                        .build();
+                break;
+
+            case "image/gif":
+                request = SendVideo.builder()
+                        .chatId(command.getChat().getChatId())
+                        .replyToMessageId(baseMessage.getMessageId())
+                        .video(new ExternalInputFile(photoUrl))
+                        .callback(this::consumeMessage)
+                        .errorHandler(e -> this.handleError(e, baseMessage))
+                        .build();
+                break;
+
+            default:
+                return;
+
+        }
+
+        imageFetcherBot.getBot().perform(request);
+
+        LOGGER.debug("Successfully sent photo {} to chat {}.", photoUrl, baseMessage.getChat().getChatId().getId());
 
     }
 
@@ -129,9 +154,9 @@ public class ImageCommandHandler implements CommandHandler {
 
     }
 
-    public void consumePhotoMessage(PhotoMessage photoMessage) {
+    public void consumeMessage(Message message) {
 
-        LOGGER.trace("Sent photo {} to chat {}", photoMessage.getMessageId(), photoMessage.getChat().getChatId().getId());
+        LOGGER.trace("Sent message {} to chat {}", message.getMessageId(), message.getChat().getChatId().getId());
 
     }
 
