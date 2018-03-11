@@ -141,13 +141,19 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
                         .thumbUrl(item.getImage().getThumbnailLink())
                         .build();
 
-            default:
+            case "image/jpeg":
+            case "image/jpg":
+            case "image/png":
                 LOGGER.debug("Image type was {}", item.getMime());
                 return InlineResultPhoto.builder()
                         .id(UUID.randomUUID().toString()) //TODO figure out how to do something useful here
                         .url(item.getLink())
                         .thumbUrl(item.getImage().getThumbnailLink())
                         .build();
+
+            default:
+                LOGGER.warn("Attempted to send unknown image type: {}", item.getMime());
+                return null;
 
         }
 
