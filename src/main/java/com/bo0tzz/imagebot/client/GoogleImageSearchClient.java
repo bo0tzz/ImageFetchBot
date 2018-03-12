@@ -31,6 +31,7 @@ public class GoogleImageSearchClient {
     private static final String LOG_KEY_FILTER = "key=(.*)&search";
     private static final String REDACTED_KEY = "key=<redacted>&search";
 
+    //FIXME migrate to google API client https://developers.google.com/api-client-library/java/google-api-java-client/dev-guide
     public GoogleImageSearchClient(List<String> keys) {
 
         if (keys.isEmpty()) {
