@@ -158,7 +158,7 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
                         .build();
 
             default:
-                LOGGER.warn("Attempted to send unknown image type [{}], image url is [{}]", item.getMime(), item.getLink());
+                LOGGER.warn("Encountered unknown image type [{}], image url is [{}]", item.getMime(), item.getLink());
                 return null;
 
         }
