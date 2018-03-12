@@ -9,7 +9,6 @@ import com.jtelegram.api.TelegramBotRegistry;
 import com.jtelegram.api.events.inline.InlineQueryEvent;
 import com.jtelegram.api.ex.TelegramException;
 import com.jtelegram.api.update.PollingUpdateProvider;
-import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,6 @@ public class ImageFetcherBot {
 
 
     public static void main(String[] args) {
-        BasicConfigurator.configure();
         new ImageFetcherBot(args);
     }
 
