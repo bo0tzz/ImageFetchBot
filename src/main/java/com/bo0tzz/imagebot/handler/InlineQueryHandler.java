@@ -74,7 +74,7 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
 
         }
 
-        LOGGER.debug("Received new inline query: {} from user {}.", query, inlineQueryEvent.getQuery().getFrom());
+        LOGGER.debug("Received new inline query: [{}] from user [{}].", query, inlineQueryEvent.getQuery().getFrom().getUsername());
 
         GoogleSearchResponse imageResults = googleImageSearchClient.getImageResults(query);
 
@@ -156,7 +156,7 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
                         .build();
 
             default:
-                LOGGER.warn("Attempted to send unknown image type: {}", item.getMime());
+                LOGGER.warn("Attempted to send unknown image type [{}], image url is [{}]", item.getMime(), item.getLink());
                 return null;
 
         }
