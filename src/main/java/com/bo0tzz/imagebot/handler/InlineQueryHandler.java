@@ -75,7 +75,7 @@ public class InlineQueryHandler implements EventHandler<InlineQueryEvent> {
 
         }
 
-        LOGGER.debug("Received new inline query: [{}] from user [{}].", query, inlineQueryEvent.getQuery().getFrom().getUsername());
+        LOGGER.debug("Received new inline query: [{}] from user [{}].", query, inlineQueryEvent.getQuery().getFrom().getUsernameFallbackName());
 
         GoogleSearchResponse imageResults = googleImageSearchClient.getImageResults(query);
 

@@ -65,7 +65,7 @@ public class ImageCommandHandler implements CommandHandler {
 
         //FUTURE send chat action "uploading"
 
-        LOGGER.debug("Received new image search command: \"{}\" from user {} in chat {}.", query, baseMessage.getFrom().getUsername(), baseMessage.getChat().getChatId().getId());
+        LOGGER.debug("Received new image search command: \"{}\" from user {} in chat {}.", query, baseMessage.getFrom().getUsernameFallbackName(), baseMessage.getChat().getChatId().getId());
 
         GoogleSearchResponse imageResults = googleImageSearchClient.getImageResults(query);
 
