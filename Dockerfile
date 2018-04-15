@@ -1,14 +1,10 @@
 FROM openjdk:8-jdk-alpine
-
-RUN mkdir -p /app/build
-RUN mkdir -p /app/run
 WORKDIR /app/build
-
 RUN apk add --no-cache maven
 COPY . .
-
 RUN mvn clean package
-RUN cp target/ImageBot.jar /app/run/
 
+FROM openjdk:8-jre-alpine
 WORKDIR /app/run
+COPY --from=0 /build/target/ImageBot.jar .
 ENTRYPOINT ["java", "-jar", "ImageBot.jar"]
