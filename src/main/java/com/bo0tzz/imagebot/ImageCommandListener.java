@@ -41,6 +41,9 @@ public class ImageCommandListener implements Listener {
     @Override
     public void onInlineQueryReceived(InlineQueryReceivedEvent event) {
         String query = event.getQuery().getQuery();
+        if (query == null || query.equals("")) {
+            return;
+        }
         HttpResponse<JsonNode> response = null;
         try {
             response = Unirest.get(getUrl() + URLEncoder.encode(query, "UTF-8"))
@@ -54,12 +57,10 @@ public class ImageCommandListener implements Listener {
         } else if (response.getBody().getObject().has("error")) {
             InlineQueryResultArticle result = InlineQueryResultArticle.builder()
                     .title("The bot has reached its request limit for today!")
-                    .description("Unfortunately, Google limits the amount of requests this bot can make every day. " +
-                            "Please contact @bo0tzz if you want to help get rid of this limit!")
+                    .description("Unfortunately, Google limits the amount of requests this bot can make every day.")
                     .inputMessageContent(InputTextMessageContent.builder()
-                        .messageText("Unfortunately this bot has reached the daily limit on how many images it can fetch for you." +
-                                "Please be patient, the limit should reset within 24 hours.\n" +
-                                "If you want to help get rid of these limits, please contact @bo0tzz!")
+                        .messageText("Unfortunately this bot has reached the daily limit on how many images it can fetch for you. " +
+                                "Please be patient, the limit should reset within 24 hours.\n")
                         .parseMode(ParseMode.MARKDOWN)
                         .build())
                     .build();
